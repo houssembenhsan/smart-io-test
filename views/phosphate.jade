@@ -1,0 +1,133 @@
+doctype html
+html
+  head
+    title technical test
+    style.
+      .button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      position: relative;
+      right: 5px;
+      }
+    |     
+    script(type='text/javascript', src='https://canvasjs.com/assets/script/jquery-1.11.1.min.js')
+    |     
+    script(type='text/javascript', src='https://canvasjs.com/assets/script/jquery.canvasjs.min.js')
+    |     
+    script(type='text/javascript').
+      var ids=0,vals=0;
+      $(function () {
+      jQuery.ajaxSetup({async:false});
+      $.get("http://catalog.industrie.gov.tn/api/action/datastore_search?resource_id=708f9db6-7b7d-46ae-bbfb-8eddfc089e65&limit=100", function(data, status){
+      ids=data.result.records.map(function(curr){return curr.Date }); // extraction des dates de statistiques
+      vals=data.result.records.map(function(curr){return parseInt(curr[ 'PRODUCTION MENSUELLE DU PHOSPHATE (TONNE)']) })//extraction de la valeur de la production
+      });
+      var i=0;
+      var dt=[];//tableau qui sera inséré dans les options du graphe
+      for(i=0;i<ids.length;i++){
+      var g={label:ids[i],y:vals[i]};
+      dt.push(g);
+      }
+      var options = {
+      title: {
+      text: "production du Phosphate entre Janvier 2010 et Juillet 2017 en KTonnes"
+      },
+      animationEnabled: true,
+      data: [
+      {
+      type: "spline", 
+      dataPoints: dt
+      }
+      ]
+      };
+      $("#chartContainer").CanvasJSChart(options);
+      // méme chose pour les autres statistiques
+      var s=0;
+      $.get("http://catalog.industrie.gov.tn/api/action/datastore_search?resource_id=b422d67b-5878-4078-b364-88cdc1497870", function(data, status){
+      s=data.result.records;
+      console.log(s)
+      })
+      var Nitrate=s.map(function(curr){return parseInt(curr[ 'Nitrate Agricole (NA) (Tonne)']) });
+      var Tripolyphosphate=s.map(function(curr){return parseInt(curr[ 'Tripolyphosphate de Sodium (STPP) (Tonne)']) });
+      var engrais=s.map(function(curr){return parseInt(curr['Engrais ternaires NPK  (Tonne)'])});
+      var acide_phosphorique=s.map(function(curr){return parseInt(curr["Acide Phosphorique 54 % P2O5 (AP 54 %) (Tonne)"])});
+      var arr_tripo=[],arr_engr=[],arr_ac=[],arr_nit=[]
+      for(i=0;i<Nitrate.length;i++){
+      var elem_nit={label:s[i].Year,y:Nitrate[i]};
+      var elem_tripo={label:s[i].Year,y:Tripolyphosphate[i]};
+      var elem_engr={label:s[i].Year,y:engrais[i]};
+      var elem_acide_phosphorique={label:s[i].Year,y:acide_phosphorique[i]}
+      arr_nit.push(elem_nit);
+      arr_tripo.push(elem_tripo);
+      arr_engr.push(elem_engr);
+      arr_ac.push(elem_acide_phosphorique);
+      } ;
+      var nit_options={
+      title: {
+      text: "Production Nitrate Agricole entre Janvier 2010 et Juillet 2017"
+      },
+      animationEnabled: true,
+      data: [
+      {
+      type: "spline",       dataPoints: arr_nit
+      }]};
+      var engr_options= {
+      title: {
+      text: "Production des engrais ternaires entre Janvier 2010 et Juillet 2017"
+      },
+      animationEnabled: true,
+      data: [
+      {
+      type: "spline", 
+      color: "black",
+      dataPoints: arr_engr
+      }]};
+      var tripo_options= {
+      title: {
+      text: "Production des engrais ternaires entre Janvier 2010 et Juillet 2017"
+      },
+      animationEnabled: true,
+      data: [
+      {
+      type: "spline", 
+      color: "green",
+      dataPoints: arr_tripo
+      }]};
+      var ac_options= {
+      title: {
+      text: "Production des engrais ternaires entre Janvier 2010 et Juillet 2017"
+      },
+      animationEnabled: true,
+      data: [
+      {
+      type: "spline",
+      color: "red",
+      dataPoints: arr_ac
+      }]};
+      $("#nitrates").CanvasJSChart(nit_options);
+      $("#tripo").CanvasJSChart(tripo_options);
+      $("#engrais").CanvasJSChart(engr_options);
+      $("#acide").CanvasJSChart(ac_options);
+      console.log(engr_options)
+      });
+  |   
+  body
+    a.button(href='/petrol') voir stats du petrol
+    |     
+    #chartContainer(style='height: 300px; width: 100%')
+    |         
+    #nitrates(style='height: 300px; width: 45%;display:inline-block')
+    |         
+    #tripo(style='height: 300px; width: 45%;display:inline-block')
+    |         
+    #engrais(style='height: 300px; width: 45%;display:inline-block')
+    |         
+    #acide(style='height: 300px; width: 45%;display:inline-block')

@@ -1,0 +1,104 @@
+doctype html
+html
+  head
+    title technical test
+    style.
+      .button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      position: relative;
+      right: 5px;
+      }
+    script(type='text/javascript', src='https://canvasjs.com/assets/script/jquery-1.11.1.min.js')
+    script(type='text/javascript', src='https://canvasjs.com/assets/script/jquery.canvasjs.min.js')
+    script(type='text/javascript').
+      var ids=0,vals=0;
+      $(function () {
+      jQuery.ajaxSetup({async:false});
+      $.get("http://catalog.industrie.gov.tn/api/action/datastore_search?resource_id=e74975f1-4e40-4b96-a66d-406b7edcb998&limit=100", function(data, status){
+      ids=data.result.records.map(function(curr){return curr.Date });
+     // l'api fournisse les données par région or que nous avons besoin des données globales
+      vals=data.result.records.map(function(curr){return  parseInt(curr['Region Sfax'])+parseInt(curr['region Mahdia'])+parseInt(curr['Region Nebeul'])+parseInt(curr['Region Medenine'])+parseInt(curr['Region Kebili'])+parseInt(curr['Region kassrine'])+parseInt(curr['Region Tataouin']) })
+      });
+      var i=0;
+      var dt=[]; //tableau qui sera inséré dans les options du graphe
+      for(i=0;i<ids.length;i++){
+      var g={label:ids[i],y:vals[i]};
+      dt.push(g);
+      }
+      var options = {
+      title: {
+      text: "production du Petrole entre Janvier 2010 et Juillet 2017 (en KT)"
+      },
+      animationEnabled: true,
+      data: [
+      {
+      type: "spline", 
+      dataPoints: dt
+      }
+      ]
+      };
+      $("#chartContainer").CanvasJSChart(options);
+            // méme chose pour les autres statistiques
+
+      var recs=0,values=0;
+      $.get("http://catalog.industrie.gov.tn/api/action/datastore_search?resource_id=1911fd1c-c823-4ff0-9ec8-1264bad56077&limit=100", function(data, status){
+      recs=data.result.records.map(function(curr){return curr.Date });
+      values=data.result.records.map(function(curr){return parseInt(curr['TOTAL(kt)'])  })
+      });
+      var exportation=[];
+      for(i=0;i<recs.length;i++){
+      var g={label:recs[i],y:values[i]};
+      exportation.push(g);
+      }
+      var export_options = {
+      title: {
+      text: "export du Petrole entre 1996 et 2016 (en KT)"
+      },
+      animationEnabled: true,
+      data: [
+      {
+      type: "column",
+      dataPoints: exportation
+      }
+      ]
+      };
+      $("#exportation").CanvasJSChart(export_options);
+      var Ds=0,Vs=0;
+      $.get("http://catalog.industrie.gov.tn/api/action/datastore_search?resource_id=6391d5f0-003d-48e9-a785-a00f3bcc7421&limit=100", function(data, status){
+      Ds=data.result.records.map(function(curr){return curr.Date });
+      Vs=data.result.records.map(function(curr){return parseInt(curr['TOTAL( kt)'])  })
+      });
+      var imp=[];
+      for(i=0;i<Ds.length;i++){
+      var g={label:Ds[i],y:Vs[i]};
+      imp.push(g);
+      }
+      var import_options = {
+      title: {
+      text: "importation Petroliere entre 1996 et 2016 (en KT)"
+      },
+      animationEnabled: true,
+      data: [
+      {
+      type: "column", 
+      dataPoints: imp
+      }
+      ]
+      };
+      console.log(import_options.data)
+      $("#importation").CanvasJSChart(import_options);
+      });
+  body
+    a.button(href='http://localhost:3000/phosphate') voir stats phosphates
+    #chartContainer(style='height: 300px; width: 100%')
+    #exportation(style='height: 300px; width: 45%;display:inline-block')
+    #importation(style='height: 300px; width: 45%;display:inline-block')
