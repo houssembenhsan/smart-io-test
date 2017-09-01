@@ -22,10 +22,8 @@ html
     script(type='text/javascript').
       var ids=0,vals=0;
       $(function () {
-      //Better to construct options first and then pass it as a parameter
       jQuery.ajaxSetup({async:false});
       $.get("http://catalog.industrie.gov.tn/api/action/datastore_search?resource_id=e74975f1-4e40-4b96-a66d-406b7edcb998&limit=100", function(data, status){
-      //ids=data.result.records.map(function(curr){return curr._id });
       ids=data.result.records.map(function(curr){return curr.Date });
       vals=data.result.records.map(function(curr){return  parseInt(curr['Region Sfax'])+parseInt(curr['region Mahdia'])+parseInt(curr['Region Nebeul'])+parseInt(curr['Region Medenine'])+parseInt(curr['Region Kebili'])+parseInt(curr['Region kassrine'])+parseInt(curr['Region Tataouin']) })
       });
@@ -64,7 +62,7 @@ html
       animationEnabled: true,
       data: [
       {
-      type: "column", //change it to line, area, column, pie, etc
+      type: "column", 
       dataPoints: exportation
       }
       ]
@@ -87,7 +85,7 @@ html
       animationEnabled: true,
       data: [
       {
-      type: "column", //change it to line, area, column, pie, etc
+      type: "column", 
       dataPoints: imp
       }
       ]
