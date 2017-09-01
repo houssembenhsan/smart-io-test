@@ -22,14 +22,14 @@ html
     script(type='text/javascript').
       var ids=0,vals=0;
       $(function () {
+      //Better to construct options first and then pass it as a parameter
       jQuery.ajaxSetup({async:false});
       $.get("http://catalog.industrie.gov.tn/api/action/datastore_search?resource_id=e74975f1-4e40-4b96-a66d-406b7edcb998&limit=100", function(data, status){
+      //ids=data.result.records.map(function(curr){return curr._id });
       ids=data.result.records.map(function(curr){return curr.Date });
-     // l'api fournisse les données par région or que nous avons besoin des données globales
       vals=data.result.records.map(function(curr){return  parseInt(curr['Region Sfax'])+parseInt(curr['region Mahdia'])+parseInt(curr['Region Nebeul'])+parseInt(curr['Region Medenine'])+parseInt(curr['Region Kebili'])+parseInt(curr['Region kassrine'])+parseInt(curr['Region Tataouin']) })
       });
-      var i=0;
-      var dt=[]; //tableau qui sera inséré dans les options du graphe
+      var i=0;var dt=[];
       for(i=0;i<ids.length;i++){
       var g={label:ids[i],y:vals[i]};
       dt.push(g);
@@ -41,14 +41,12 @@ html
       animationEnabled: true,
       data: [
       {
-      type: "spline", 
+      type: "spline", //change it to line, area, column, pie, etc
       dataPoints: dt
       }
       ]
       };
       $("#chartContainer").CanvasJSChart(options);
-            // méme chose pour les autres statistiques
-
       var recs=0,values=0;
       $.get("http://catalog.industrie.gov.tn/api/action/datastore_search?resource_id=1911fd1c-c823-4ff0-9ec8-1264bad56077&limit=100", function(data, status){
       recs=data.result.records.map(function(curr){return curr.Date });
@@ -66,7 +64,7 @@ html
       animationEnabled: true,
       data: [
       {
-      type: "column",
+      type: "column", //change it to line, area, column, pie, etc
       dataPoints: exportation
       }
       ]
@@ -89,7 +87,7 @@ html
       animationEnabled: true,
       data: [
       {
-      type: "column", 
+      type: "column", //change it to line, area, column, pie, etc
       dataPoints: imp
       }
       ]
@@ -98,7 +96,7 @@ html
       $("#importation").CanvasJSChart(import_options);
       });
   body
-    a.button(href='http://localhost:3000/phosphate') voir stats phosphates
+    a.button(href='/phosphate') voir stats phosphates
     #chartContainer(style='height: 300px; width: 100%')
     #exportation(style='height: 300px; width: 45%;display:inline-block')
     #importation(style='height: 300px; width: 45%;display:inline-block')
